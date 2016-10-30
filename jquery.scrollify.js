@@ -99,6 +99,8 @@
 			standardScrollElements: false,
 			setHeights: true,
 			overflowScroll:true,
+			calcScrollTop:false,
+			withSubSectionClass:'',
 			before:function() {},
 			after:function() {},
 			afterResize:function() {},
@@ -619,12 +621,28 @@
 			heights = [];
 			names = [];
 			elements = [];
+			var selectorTop = 0;
 			$(selector).each(function(i){
 					var $this = $(this);
-					if(i>0) {
-						heights[i] = parseInt($this.offset().top) + settings.offset;
+					if (settings.calcScrollTop) {
+						if(i>0) {
+							heights[i] = parseInt(selectorTop) + settings.offset;
+						} else {
+							heights[i] = parseInt(selectorTop);
+						}
+						if (settings.withSubSectionClass != ''
+									&& $this.hasClass(settings.withSubSectionClass)
+									&& $this.next("."+settings.withSubSectionClass).length > 0) {
+								selectorTop += $this.outerHeight()*1.5;
+						} else {
+								selectorTop += $this.outerHeight();
+						}
 					} else {
-						heights[i] = parseInt($this.offset().top);
+						if(i>0) {
+							heights[i] = parseInt($this.offset().top) + settings.offset;
+						} else {
+							heights[i] = parseInt($this.offset().top);
+						}
 					}
 					if(settings.sectionName && $this.data(settings.sectionName)) {
 						names[i] = "#" + $this.data(settings.sectionName).toString().replace(/ /g,"-");
